@@ -1,33 +1,57 @@
 
-var multer  = require('multer');
+var db = require('./dbconnect');
+const jwt = require('jsonwebtoken');
+var config = require('../config');
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-      cb(null, 'images')   
-  },
-  filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname)      
-  }
-})
-
-var upload = multer({ storage: storage }).array("imgUploader", 1);
+db.connect();
 
 exports.editProfile = function(req,res){
-  upload(req, res, function (err) {
-    if (err) {
-        console.log("error uploading image",err)
-    }
-        console.log("File uploaded sucessfully!");
-    });  
-
-    // var users={
-    //     "first_name":req.body.first_name,
-    //     "last_name":req.body.last_name,
-    //     "email":req.body.email,
-    //     "password":hash, 
-    //     "created":today,
-    //     "modified":today
-    //   }
+    var users={
+        "first_name" : req.body.first_name,
+        "last_name" : req.body.last_name,
+        "profile_picture":req.body.profile_picture,
+        "reg_no":req.body.reg_no,
+        "degree":req.body.degree, 
+        "branch":req.body.branch,
+        "mobile":req.body.mobile
+      }
+      console.log("USERS",users);
+      db.connection.query("UPDATE users SET ? WHERE email= '"+req.body.ref_id+"'", users,function (error, results, fields) {
+        if (error) {
+          console.log("error ocurred",error);
+          res.send({
+            "code":400,
+            "failed":"error ocurred"
+          })
+        }else{
+          console.log('The solution is: ', results);
+          res.send({
+            "code":200,
+            "success":"user registered sucessfully"
+              });
+        }
+        });
 
 }
 
+
+exports.getProfile = function(req,res){
+      db.connection.query("SELECT profile_picture,first_name,last_name,reg_no,degree,branch,email,mobile FROM users WHERE email= '"+req.body.ref_id+"'",function (error, results, fields) {
+        console.log("RESULTS",results[0]);
+        if (error) {
+          console.log("error ocurred",error);
+          res.send({
+            "code":400,
+            "status":"error ocurred",
+            "response":error
+          })
+        }else{
+          console.log('The solution is: ', results);
+          res.send({
+            "code":200,
+            "status":"success", 
+            "response": results[0]
+              });
+        }
+        });
+}
