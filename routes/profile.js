@@ -1,6 +1,6 @@
 var db = require('./dbconnect');
 var bcrypt = require('bcrypt');
-var responses = require('../utils/responses.js');
+var responses = require('../utils/responses');
 
 
 exports.editProfile = function (req, res) {
@@ -14,7 +14,7 @@ exports.editProfile = function (req, res) {
         var query = "UPDATE users SET ? WHERE id=" + id;
         db.connection.query(query, req.body, function (error, results, fields) {
           if (error) {
-=            res.send(responses.errInternalServer);
+            res.send(responses.errInternalServer);
           } else {
             res.send({
               "code": 200,
