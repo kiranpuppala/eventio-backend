@@ -1,22 +1,14 @@
-
 var db = require('./dbconnect');
-var config = require('../config');
-const jwt = require('jsonwebtoken');
+const responses = require('../utils/responses');
 
 exports.createEvent = function (req, res) {
   db.connection.query("INSERT INTO events SET ?", req.body, function (error, results, fields) {
     if (error) {
-      console.log("error ocurred", error);
-      res.send({ 
-        "code": 400,
-        "status": "",
-        "response": {}
-      })
+      res.send(responses.errInternalServer);
     } else {
-      console.log('The solution is: ', results);
       res.send({
-        "code": 200,
-        "status": "",
+        "code": 201,
+        "status": "created",
         "response": {}
       });
     }
@@ -25,7 +17,6 @@ exports.createEvent = function (req, res) {
 }
 
 exports.updateEvent = function (req, res) {
-
   var id = req.body.id;
   delete req.body.id;
 
@@ -33,22 +24,15 @@ exports.updateEvent = function (req, res) {
 
   db.connection.query(query, req.body, function (error, results, fields) {
     if (error) {
-      console.log("error ocurred", error);
-      res.send({
-        "code": 400,
-        "status": "",
-        "response": {}
-      })
+      res.send(responses.errInternalServer);
     } else {
-      console.log('The solution is: ', results);
       res.send({
         "code": 200,
-        "status": "",
+        "status": "updated",
         "response": {}
       });
     }
   });
-
 }
 
 exports.joinEvent = function (req, res) {
@@ -61,7 +45,6 @@ exports.joinEvent = function (req, res) {
     if(!error){
       var joinees = [];
       if(results.length>0){
-        console.log("RESULts",results[0].joinees)
         try{
           joinees = JSON.parse(results[0].joinees);
         }catch(e){
@@ -74,21 +57,23 @@ exports.joinEvent = function (req, res) {
   
       db.connection.query("UPDATE events SET joinees='"+JSON.stringify(joinees)+"' WHERE id="+id,function(error,results,fields){
         if(!error){
-          console.log("RESULTS",results[0])
           res.send({
             "code" : 200, 
-            "status" : "", 
+            "status" : "Joined Successfully", 
             "response" : {}
           })
+        }else{
+          res.send(responses.errInternalServer);
         }
       });
+    }else{
+      res.send(responses.errInternalServer);
     }
   });
 }
 
 
 exports.listEvents = function (req, res) {
-  console.log("REQUEST", req);
   var query;
   if (typeof req.body.email != "undefined")
     query = "SELECT * FROM events WHERE email ='" + req.body.email + "'";
@@ -97,14 +82,8 @@ exports.listEvents = function (req, res) {
 
   db.connection.query(query, function (error, results, fields) {
     if (error) {
-      console.log("error ocurred", error);
-      res.send({
-        "code": 400,
-        "status": "",
-        "response": {}
-      })
+      res.send(responses.errInternalServer);
     } else {
-      console.log('The solution is: ', results);
       res.send({
         "code": 200,
         "status": "",
