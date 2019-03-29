@@ -2,10 +2,14 @@ var mysql      = require('mysql');
 
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'password',
-  database : 'eventapp'
+  host     : 'remotemysql.com',
+  user     : 'n1pKZ9NfuF',
+  password : 'UjBRUGRjDB',
+  database : 'n1pKZ9NfuF', 
+  port : 3306
 });
+
+
+
 
 exports.connection = connection;

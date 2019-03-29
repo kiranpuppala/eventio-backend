@@ -44,6 +44,7 @@ router.post('/register', login.register);
 router.post('/login', login.login)
 router.post('/edit-profile', verifyToken, profile.editProfile);
 router.get('/get-profile', verifyToken, profile.getProfile);
+router.get('/get-public-profile', verifyToken, profile.getPublicProfile);
 router.post('/create-event', verifyToken, events.createEvent);
 router.post('/update-event', verifyToken, events.updateEvent);
 router.post('/join-event', verifyToken, events.joinEvent);
@@ -55,6 +56,16 @@ router.post('/validate-token', verifyToken, function (req, res) {
   });
 });
 router.post('/list-events', verifyToken, events.listEvents);
+router.post('/manage-events', verifyToken, events.manageEvents);
+
+router.post('/register-me',function(req,res){
+  res.send({
+    name : "kiran",
+    phone : 9963169929, 
+    city : "bangalore",
+    registered : true
+  });
+})
 
 
 app.use('/api', router);
