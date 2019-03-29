@@ -71,5 +71,5 @@ router.post('/register-me',function(req,res){
 app.use('/api', router);
 
 
-app.listen(5000);
+app.listen(process.env.PORT || 5000);
 
